@@ -70,24 +70,22 @@ This section describes the basics for creating and running audit log searches. U
     - [Filter search results](search-the-audit-log-in-security-and-compliance.md#step-3-filter-the-search-results)
     - [Export search results](search-the-audit-log-in-security-and-compliance.md#step-4-export-the-search-results-to-a-file)
 
-## Find the IP address of the computer used to access an account
+## Search for mailbox activities performed by users with non-E5 licenses
 
-The IP address corresponding to an activity performed by any user is included in most audit records. Information about the client used is also included in the audit record.
+Even when [mailbox auditing on by default](enable-mailbox-auditing.md) is turned on for your organization, you might notice that mailbox audit events for some users aren't found in audit log searches by using the compliance center, the **Search-UnifiedAuditLog** cmdlet, or the Office 365 Management Activity API. The reason for this is that mailbox audit events will be returned only for users with E5 licenses when you one of the previous methods to search the unified audit log.
 
-Here's how to configure an audit log search query for this scenario:
+To retrieve mailbox audit log records for non-E5 users, you can perform one of the following workarounds:
 
-**Activities:** If relevant to your case, select a specific activity to search for. For troubleshooting potentially compromised accounts, consider selecting the **User signed in to mailbox** activity under **Exchange mailbox activities**. This returns auditing records showing the IP address that was use when signing in to the mailbox. Otherwise, leave this field blank to return audit records for all activities. 
+- Manually enable mailbox auditing on individual mailboxes (run the `Set-Mailbox -Identity <MailboxIdentity> -AuditEnabled $true` command in Exchange Online PowerShell). After you do this, search for mailbox audit activities by using the compliance center, the **Search-UnifiedAuditLog** cmdlet, or the Office 365 Management Activity API.
+  
+  > [!NOTE]
+  > If mailbox auditing already appears to be enabled on the mailbox, but your searches return no results, change the value of the _AuditEnabled_ parameter to `$false` and then back to `$true`.
+  
+- Use the following cmdlets in Exchange Online PowerShell:
 
-> [!TIP]
-> Leaving this field blank will return **UserLoggedIn** activities, which is an Azure Active Directory activity that indicates that someone has signed in to an user account. Use filtering in the search results to display the **UserLoggedIn** audit records.
+  - [Search-MailboxAuditLog](https://docs.microsoft.com/powershell/module/exchange/search-mailboxauditlog) to search the mailbox audit log for specific users.
 
-**Start date** and **End date:** Select a date range that's applicable to your investigation.
-
-**Users:** If you're investigating a compromised account, select the user whose account was compromised. This returns audit records for activities performed by that user account.
-
-**File, folder, or site:** Leave this field blank.
-
-After you run the search, the IP address for each activity is displayed in the **IP address** column in the search results. Select the record in the search results to view more detailed information on the flyout page.
+  - [New-MailboxAuditLogSearch](https://docs.microsoft.com/powershell/module/exchange/new-mailboxauditlogsearch) to search the mailbox audit log for specific users and to have the results sent via email to specified recipients.
 
 ## Determine who set up email forwarding for a mailbox
 
@@ -195,6 +193,25 @@ c. The *MoveToFolder* parameter specifies the action for the inbox rule. In this
 
 d. The **UserId** field indicates the user who created the inbox rule specified in the **ObjectId** field. This user is also displayed in the **User** column on the search results page.
 
+## Find the IP address of the computer used to access an account
+
+The IP address corresponding to an activity performed by any user is included in most audit records. Information about the client used is also included in the audit record.
+
+Here's how to configure an audit log search query for this scenario:
+
+**Activities:** If relevant to your case, select a specific activity to search for. For troubleshooting potentially compromised accounts, consider selecting the **User signed in to mailbox** activity under **Exchange mailbox activities**. This returns auditing records showing the IP address that was use when signing in to the mailbox. Otherwise, leave this field blank to return audit records for all activities. 
+
+> [!TIP]
+> Leaving this field blank will return **UserLoggedIn** activities, which is an Azure Active Directory activity that indicates that someone has signed in to an user account. Use filtering in the search results to display the **UserLoggedIn** audit records.
+
+**Start date** and **End date:** Select a date range that's applicable to your investigation.
+
+**Users:** If you're investigating a compromised account, select the user whose account was compromised. This returns audit records for activities performed by that user account.
+
+**File, folder, or site:** Leave this field blank.
+
+After you run the search, the IP address for each activity is displayed in the **IP address** column in the search results. Select the record in the search results to view more detailed information on the flyout page.
+
 ## Investigate why there was a successful login by a user outside your organization
 
 When reviewing audit records in the audit log, you may see records that indicate an external user was authenticated by Azure Active Directory and successfully logged in to your organization. For example, an admin in contoso.onmicrosoft.com may see an audit record showing that a user from a different organization (for example, fabrikam.onmicrosoft.com) successfully logged into contoso.onmicrosoft.com. Similarly, you may see audit records that indicate users with a Microsoft Account (MSA), such as an Outlook.com or Live.com, successfully logged in to your organization. In these situations, the audited activity is **User logged In**. 
@@ -237,23 +254,6 @@ Here are two examples scenarios that would result in a successful **User logged 
 - Search for SharePoint sharing activities that would indicate a file was shared with the external user identified by a **User logged in** audit record. For more information, see [Use sharing auditing in the audit log](use-sharing-auditing.md).
 
 - Export the audit log search results that contain records relevant to your investigation so that you can use Excel to search for other activities related to the external user. For more information, see  [Export, configure, and view audit log records](export-view-audit-log-records.md).
-
-## Search for mailbox activities performed by users with non-E5 licenses
-
-Even when [mailbox auditing on by default](enable-mailbox-auditing.md) is turned on for your organization, you might notice that mailbox audit events for some users aren't found in audit log searches by using the compliance center, the **Search-UnifiedAuditLog** cmdlet, or the Office 365 Management Activity API. The reason for this is that mailbox audit events will be returned only for users with E5 licenses when you one of the previous methods to search the unified audit log.
-
-To retrieve mailbox audit log records for non-E5 users, you can perform one of the following workarounds:
-
-- Manually enable mailbox auditing on individual mailboxes (run the `Set-Mailbox -Identity <MailboxIdentity> -AuditEnabled $true` command in Exchange Online PowerShell). After you do this, search for mailbox audit activities by using the compliance center, the **Search-UnifiedAuditLog** cmdlet, or the Office 365 Management Activity API.
-  
-  > [!NOTE]
-  > If mailbox auditing already appears to be enabled on the mailbox, but your searches return no results, change the value of the _AuditEnabled_ parameter to `$false` and then back to `$true`.
-  
-- Use the following cmdlets in Exchange Online PowerShell:
-
-  - [Search-MailboxAuditLog](https://docs.microsoft.com/powershell/module/exchange/search-mailboxauditlog) to search the mailbox audit log for specific users.
-
-  - [New-MailboxAuditLogSearch](https://docs.microsoft.com/powershell/module/exchange/new-mailboxauditlogsearch) to search the mailbox audit log for specific users and to have the results sent via email to specified recipients.
 
 ## Search for mailbox activities performed in a specific mailbox (including shared mailboxes)
 
