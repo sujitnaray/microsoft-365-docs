@@ -20,7 +20,7 @@ ms.custom:
 description: "Learn how to use the Microsoft 365 audit log search tool to help troubleshoot common support issues for email accounts."
 ---
 
-# Search the audit log to investigate common support issues
+# Search the audit log to investigate common issues
 
 This article describes how to use the audit log search tool to help you investigate common support issues. This includes using the audit log to:
 
@@ -70,16 +70,16 @@ This section describes the basics for creating and running audit log searches. U
     - [Filter search results](search-the-audit-log-in-security-and-compliance.md#step-3-filter-the-search-results)
     - [Export search results](search-the-audit-log-in-security-and-compliance.md#step-4-export-the-search-results-to-a-file)
 
-## Find the IP address of the computer used to access a compromised account
+## Find the IP address of the computer used to access an account
 
 The IP address corresponding to an activity performed by any user is included in most audit records. Information about the client used is also included in the audit record.
 
 Here's how to configure an audit log search query for this scenario:
 
-**Activities:** If relevant to your case, select a specific activity to search for. For troubleshooting compromised accounts, consider selecting the **User signed in to mailbox** activity under **Exchange mailbox activities**. This returns auditing records showing the IP address that was use when signing in to the mailbox. Otherwise, leave this field blank to return audit records for all activities. 
+**Activities:** If relevant to your case, select a specific activity to search for. For troubleshooting potentially compromised accounts, consider selecting the **User signed in to mailbox** activity under **Exchange mailbox activities**. This returns auditing records showing the IP address that was use when signing in to the mailbox. Otherwise, leave this field blank to return audit records for all activities. 
 
 > [!TIP]
-> Leaving this field blank will  return **UserLoggedIn** activities, which is an Azure Active Directory activity that indicates that someone has signed in to an user account. Use filtering in the search results to display the **UserLoggedIn** audit records.
+> Leaving this field blank will return **UserLoggedIn** activities, which is an Azure Active Directory activity that indicates that someone has signed in to an user account. Use filtering in the search results to display the **UserLoggedIn** audit records.
 
 **Start date** and **End date:** Select a date range that's applicable to your investigation.
 
